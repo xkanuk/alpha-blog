@@ -1,3 +1,11 @@
+Add user-article association
+- remember to edit model so that 
+  - user has many articles
+  - article belongs to a user 
+    - or something like that
+
+View articles - newest first
+
 Validations for User class:
 
 - username must be present and unique, length between 3 and 25 characters
