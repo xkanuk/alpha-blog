@@ -1,18 +1,32 @@
-Add user-article association
-- remember to edit model so that 
-  - user has many articles
-  - article belongs to a user 
-    - or something like that
+To generate a migration to add the user_id column to articles table, you can use the command below:
 
-View articles - newest first
+$ rails generate migration add_user_id_to_articles
 
-Validations for User class:
+Then within the change method fill in the code specifying the change:
 
-- username must be present and unique, length between 3 and 25 characters
+add_column :articles, :user_id, :int
 
-- email must be present and unique, length max of 105 characters
+Run the migration file to effect the change:
 
-- validate email format using regex (regular expression)
-The ruby regular expression used to match the format of valid email addresses is listed below.
+$ rails db:migrate
 
-/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+To form the association among the models, add the following line to article.rb model file:
+
+belongs_to :user
+
+And add the following line to user.rb model file:
+
+has_many :articles
+
+Ensure you have a couple of users in your users table created using the rails console. Then add in a line in the create action to temporarily grab and hardcode a user to each article that's created:
+
+def create 
+  @article = Article.new(article_params) 
+  @article.user = User.first # <--- Add this line
+  if @article.save 
+    flash[:notice] = "Article was created successfully." 
+    redirect_to @article 
+  else 
+    render 'new' 
+  end 
+end
