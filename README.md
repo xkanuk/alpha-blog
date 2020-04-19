@@ -1,6 +1,10 @@
-before_save method
+Lesson 136
+Add secure password
 
-In the video we used the before_save method to change emails entered to lowercase before saving them to the database. To accomplish this we added the line before to our user model:
+don't forget to save your migrate file before you run db:migrate
+if you do forget do:
+rake db:rollback
+fix and save  and then
+rake db:migrate
 
-before_save { self.email = email.downcase }
-
+should be good!   (works for one step only)
