@@ -1,16 +1,16 @@
-Lesson 142  Edit users - text directions and code
+Lesson 145 
+Show user and profile image - text directions and code
+To have a profile image associated with an email account you control, add one using the site en.gravatar.com. This will be the globally recognized avatar (gravatar for short) associated with that email address (this step is not necessary to get the functionality working in the app).
 
-All the code changes made in the video are available here: https://github.com/udemyrailscourse/alpha-blog-6/commit/e247a7b0d8e52ddd71ac0571a2cb1d6cae2e1906
+The code changes made in this video can be found here: https://github.com/udemyrailscourse/alpha-blog-6/commit/51c2ec4541a6340910f07211445ac13af21d0c5c
 
-To look for a specific keyword in search results from a command issued in the terminal, you can use the pipe operator followed by grep. In the video we looked for 'edit' from rails routes using the command below:
+Summary of changes (actual ode can be found in the commit):
 
-$ rails routes --expanded | grep edit
+- Add show action in users controller and a show.html.erb template under views/users.
 
-Summary of the changes made to add the edit existing user functionality are listed below (check out the repo for specific code):
+- Add gravatar_for as a helper method in app/helpers/application_helper.rb file.
 
-- Add the edit and update actions in users controller.
+- Extract the articles listing code from views/articles/index.html.erb file and add it to an _article.html.erb partial within the same folder.
 
-- Add the edit.html.erb template under app/views/users folder.
-
-- Update the form partial under app/views/users folder to accommodate different button text to display based on if the record being worked on is a new record (new template) or existing record (edit template).
+- Render this partial from both the show and index templates. Be sure to initiate the appropriate instance variable from the users show action.
 
