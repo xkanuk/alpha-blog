@@ -1,13 +1,15 @@
-Lesson 147
+Cleanup layout - text reference
+The code updates made in the video can be found here: https://github.com/udemyrailscourse/alpha-blog-6/commit/51899366862a4f9509ffad71697af823cd0281d9
 
-Add users index - text directions
-The code changes made in the video can be found here: https://github.com/udemyrailscourse/alpha-blog-6/commit/a564078908ef85f49b88e31ea12f3fef1d805819
+Summary of updates:
 
-Summary of changes:
+- 'Update your profile' button added to users show page.
 
-- Added an index action in the users_controller to list all users using the application.
+- Redirect updated in users_controller update action to go to the users show page, instead of the articles listing page.
 
-- Added an index.html.erb template and filled in the code for the view using the app/views/articles/_article.html.erb partial as a starting template.
+- Articles index updated by modifying the article partial, the username for users associated with articles displayed turned to links that go to the users' show page.
 
-- Added a link to "Bloggers" in the navigation partial which leads to the users index page.
+- Articles show page modified to display a gravatar image of the user associated with the article.
 
+Overview
+Q&A
