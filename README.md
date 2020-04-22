@@ -1,21 +1,13 @@
-Add login form - text references
-The code changes made during the previous video can be found here: https://github.com/udemyrailscourse/alpha-blog-6/commit/386d8f6a61fa9ab415c65baa63d0ca1225f6c32f
+Authentication helper methods - text reference and code
+The code changes made during the previous video can be found here: https://github.com/udemyrailscourse/alpha-blog-6/commit/d154a5b0c53a05384e036623b4f8c4c56abc0e4b
 
 Summary of changes:
 
-- Added routes for login - new, create and destroy (to represent login form, logging in a user and logging out a user).
+- Added current_user and logged_in? helper methods.
 
-- Added a sessions controller with the new, create and destroy actions.
+- Modified the navigation partial and utilized these methods to display links based on logged in state.
 
-- Added a sessions folder under app/views and created a new.html.erb template to display the login form.
+- Modified the users controller create action so users' are logged in once they sign-up.
 
-Create and destroy sessions for users - text directions and code
-The code changes made during the previous video can be found here: https://github.com/udemyrailscourse/alpha-blog-6/commit/95159f6af119fa4edde62172b85e1e51da9c5a3f
+- Added set_user method and used it as before_action for show, edit and update actions in users controller.
 
-You can read more about Sessions and how Rails utilizes them here: https://guides.rubyonrails.org/action_controller_overview.html#session
-
-Summary:
-
--  Completed create and destroy actions for sessions controller to log users in and out.
-
-- Added log in and log out links to navigation partial.
