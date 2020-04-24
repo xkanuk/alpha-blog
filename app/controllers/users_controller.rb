@@ -2,7 +2,7 @@ class UsersController < ApplicationController
 
   include ApplicationHelper
   before_action :set_user, only: [:show, :edit, :update]
-  before_action :require_user, except: [:index, :show]
+  before_action :require_user, except: [:index, :show, :new, :create]
   before_action :require_same_user, only: [:edit, :update]
 
   def new
