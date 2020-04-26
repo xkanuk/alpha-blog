@@ -1,52 +1,104 @@
-Add Admin User - Text directions and code
-To generate a migration and add the admin column to users table:
+Categories Controller and Tests - Text directions and code
+Create a file named categories_controller_test.rb under the test/controllers folder and fill it in with the following:
 
-rails generate migration add_admin_to_users
+require 'test_helper'
 
-Within the migration file, in the def change method, add in the following code:
+class CategoriesControllerTest < ActionController::TestCase
 
-add_column :users, :admin, :boolean, default: false
+def setup
 
-Then run rake db:migrate to run the migration file and add the column to the users table:
+@category = Category.create(name: "sports")
 
-rake db:migrate
+end
 
-Jump on rails console and you can grab a user object and set the user to admin by setting their admin column to true:
+test "should get categories index" do
 
-user = User.find(idofuser)
+get :index
 
-or
+assert_response :success
 
-user = User.last or User.first or User.find_by(email: "emailofuser")
+end
 
-user.admin?
+test "should get new" do
 
-user.toggle!(:admin)
+get :new
 
-Then user.admin? # should be true at this point
+assert_response :success
 
-Update require_same_user method in the articles_controller.rb file:
+end
 
-def require_same_user
+test "should get show" do
 
-if current_user != @article.user and !current_user.admin?
+get(:show, {'id' => @category.id})
 
-flash[:danger] = "You can only edit or delete your own articles"
-
-redirect_to root_path
+assert_response :success
 
 end
 
 end
 
-Then proceed to articles views, in the _article.html.erb partial under the app/views/articles folder, update the line where you're checking for <% if logged_in? &&....%> to:
+If Rails 5, then use the following instead:
 
-<% if logged_in? && (current_user == article.user || current_user.admin?) %>
+require 'test_helper'
 
-Make the same update to the show.html.erb file under app/views/articles folder:
+class CategoriesControllerTest < ActionDispatch::IntegrationTest
 
-<% if logged_in? && (current_user == article.user || current_user.admin?) %>
+def setup
 
-In _navigation.html.erb partial under app/views/layouts folder add admin next to where you display Your Profile:
+@category = Category.create(name: "sports")
 
-Your Profile <%= "Admin" if current_user.admin? %>
+end
+
+test "should get categories index" do
+
+get categories_path
+
+assert_response :success
+
+end
+
+test "should get new" do
+
+get new_category_path
+
+assert_response :success
+
+end
+
+test "should get show" do
+
+get category_path(@category)
+
+assert_response :success
+
+end
+
+end
+
+
+
+
+
+Under app/controllers folder create a file named categories_controller.rb and fill it in:
+
+class CategoriesController < ApplicationController
+
+def index
+
+end
+
+def new
+
+end
+
+def show
+
+end
+
+end
+
+In your config/routes.rb file add in the following route for categories:
+
+resources :categories, except: [:destroy]
+
+Under app/views folder create a folder called categories and create 3 files, new.html.erb, index.html.erb and show.html.erb
