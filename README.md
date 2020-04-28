@@ -1,160 +1,102 @@
-Admin User Requirement and Test - Text directions and code
-Update categories_controller_test.rb file to create admin user and then simulate log in:
+Update Tests and Navbar - Text directions and code
+Update the create_categories_test.rb integration test file under test/integration folder to sign in an admin user:
 
 require 'test_helper'
 
-class CategoriesControllerTest < ActionController::TestCase
+class CreateCategoriesTest < ActionDispatch::IntegrationTest
 
 def setup
-
-@category = Category.create(name: "sports")
 
 @user = User.create(username: "john", email: "john@example.com", password: "password", admin: true)
 
 end
 
-test "should get categories index" do
+test "get new category form and create category" do
 
-get :index
+sign_in_as(@user, "password")
 
-assert_response :success
+get new_category_path
 
-end
+assert_template 'categories/new'
 
-test "should get new" do
+assert_difference 'Category.count', 1 do
 
-session[:user_id] = @user.id
+post_via_redirect categories_path, category: {name: "sports"}
 
-get :new
-
-assert_response :success
+# Note the line above was different for Rails 5
 
 end
 
-test "should get show" do
+assert_template 'categories/index'
 
-get(:show, {'id' => @category.id})
-
-assert_response :success
+assert_match "sports", response.body
 
 end
 
-test "should redirect create when admin not logged in" do
+test "invalid category submission results in failure" do
+
+sign_in_as(@user, "password")
+
+get new_category_path
+
+assert_template 'categories/new'
 
 assert_no_difference 'Category.count' do
 
-post :create, category: { name: "sports" }
+post categories_path, category: {name: " "}
+
+# Note the line above was different for Rails 5
 
 end
 
-assert_redirected_to categories_path
+assert_template 'categories/new'
 
-end
+assert_select 'h2.panel-title'
 
-end
-
-If using Rails 5, use below instead:
-
-require 'test_helper'
-
-class CategoriesControllerTest < ActionDispatch::IntegrationTest
-  def setup
-    @category = Category.create(name: "Sports")
-    @user = User.create(username: "john", email: "john@example.com", password: "password", admin: true)
-  end
-  
-  test "should get categories index" do
-    get categories_path
-    assert_response :success
-  end
-  
-  test "should get new" do
-    sign_in_as(@user, "password")
-    get new_category_path
-    assert_response :success
-  end
-  
-  test "should get show" do
-    get category_path(@category)
-    assert_response :success
-  end
-  
-  test "should redirect create when admin not logged in" do
-    assert_no_difference 'Category.count' do
-      post categories_path, params: { category: { name: "sports" } }
-    end
-    assert_redirected_to categories_path
-  end
-end
-
-Continuing with Rails 5 specific directions, in the test_helper.rb file you'll need to add sign_in_as method as follows 
-
-  def sign_in_as(user, password)
-    post login_path, params: { session: { email: user.email, password: password } }
-  end
-
----- X -----
-
-Back to regular directions:
-
-Add code to require logged in admin users to categories_controller.rb file:
-
-class CategoriesController < ApplicationController
-
-before_action :require_admin, except: [:index, :show]
-
-def index
-
-@categories = Category.paginate(page: params[:page], per_page: 5)
-
-end
-
-def new
-
-@category = Category.new
-
-end
-
-def create
-
-@category = Category.new(category_params)
-
-if @category.save
-
-flash[:success] = "Category was created successfully"
-
-redirect_to categories_path
-
-else
-
-render 'new'
+assert_select 'div.panel-body'
 
 end
 
 end
 
-def show
+Add sign_in_user method to test_helper.rb file under test folder:
+
+def sign_in_as(user, password)
+
+post login_path, session: {email: user.email, password: password}
 
 end
 
-private
+If using Rails 5, you had already added this method in the previous video, it looked slightly different (shown below):
 
-def category_params
-
-params.require(:category).permit(:name)
-
+def sign_in_as(user, password)
+   post login_path, params: { session: { email: user.email, password: password } }
 end
 
-def require_admin
+Update the navigation partial to display categories including restrictions based on admin user for new categories path by adding the following code right under the <% end %> block for Actions and above the </ul> tag:
 
-if !logged_in? || (logged_in? and !current_user.admin?)
+<li class="dropdown">
 
-flash[:danger] = "Only admins can perform that action"
+<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
 
-redirect_to categories_path
+<ul class="dropdown-menu">
 
-end
+<li><%= link_to "All Categories", categories_path %></li>
 
-end
+<% Category.all.each do |category| %>
 
-end
+<li><%= link_to "#{category.name}", category_path(category) %></li>
+
+<% end %>
+
+<% if logged_in? and current_user.admin? %>
+
+<li role="separator" class="divider"></li>
+
+<li><%= link_to "Create New Category", new_category_path %></li>
+
+<% end %>
+
+</ul>
+
+</li>
