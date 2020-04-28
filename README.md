@@ -1,102 +1,58 @@
-Update Tests and Navbar - Text directions and code
-Update the create_categories_test.rb integration test file under test/integration folder to sign in an admin user:
+Build Article and Category Association - Text directions and code
+To generate a migration file to create the article_categories table:
 
-require 'test_helper'
+rails generate migration create_article_categories
 
-class CreateCategoriesTest < ActionDispatch::IntegrationTest
+Within the migration file add in the following to add article_id and category_id to the table:
 
-def setup
+t.integer :article_id
 
-@user = User.create(username: "john", email: "john@example.com", password: "password", admin: true)
+t.integer :category_id
 
-end
+Run rake db:migrate to create the table:
 
-test "get new category form and create category" do
+rake db:migrate
 
-sign_in_as(@user, "password")
+Create a model file named article_category.rb under the app/models folder and fill it in:
 
-get new_category_path
+class ArticleCategory < ActiveRecord::Base
 
-assert_template 'categories/new'
+# Note Rails 5 -> class ArticleCategory < ApplicationRecord
 
-assert_difference 'Category.count', 1 do
+belongs_to :article
 
-post_via_redirect categories_path, category: {name: "sports"}
-
-# Note the line above was different for Rails 5
+belongs_to :category
 
 end
 
-assert_template 'categories/index'
+Update the article.rb and category.rb model files to include the following lines:
 
-assert_match "sports", response.body
+article.rb ->
 
-end
+has_many :article_categories
 
-test "invalid category submission results in failure" do
+has_many :categories, through: :article_categories
 
-sign_in_as(@user, "password")
+category.rb ->
 
-get new_category_path
+has_many :article_categories
 
-assert_template 'categories/new'
+has_many :articles, through: :article_categories
 
-assert_no_difference 'Category.count' do
+Then hop on the rails console and test out the associations:
 
-post categories_path, category: {name: " "}
+ArticleCategory.all
 
-# Note the line above was different for Rails 5
+ArticleCategory
 
-end
+article = Article.last
 
-assert_template 'categories/new'
+category = Category.last
 
-assert_select 'h2.panel-title'
+article.categories
 
-assert_select 'div.panel-body'
+article.categories << category
 
-end
+category.articles
 
-end
-
-Add sign_in_user method to test_helper.rb file under test folder:
-
-def sign_in_as(user, password)
-
-post login_path, session: {email: user.email, password: password}
-
-end
-
-If using Rails 5, you had already added this method in the previous video, it looked slightly different (shown below):
-
-def sign_in_as(user, password)
-   post login_path, params: { session: { email: user.email, password: password } }
-end
-
-Update the navigation partial to display categories including restrictions based on admin user for new categories path by adding the following code right under the <% end %> block for Actions and above the </ul> tag:
-
-<li class="dropdown">
-
-<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Categories <span class="caret"></span></a>
-
-<ul class="dropdown-menu">
-
-<li><%= link_to "All Categories", categories_path %></li>
-
-<% Category.all.each do |category| %>
-
-<li><%= link_to "#{category.name}", category_path(category) %></li>
-
-<% end %>
-
-<% if logged_in? and current_user.admin? %>
-
-<li role="separator" class="divider"></li>
-
-<li><%= link_to "Create New Category", new_category_path %></li>
-
-<% end %>
-
-</ul>
-
-</li>
+category.articles << article
