@@ -1,58 +1,90 @@
-Build Article and Category Association - Text directions and code
-To generate a migration file to create the article_categories table:
+Add Association from UI - Text directions and code
+Update the _form.html.erb partial under the app/views/articles folder and add the part to associate categories:
 
-rails generate migration create_article_categories
+<%= render 'shared/errors', obj: @article %>
 
-Within the migration file add in the following to add article_id and category_id to the table:
+<div class='row'>
 
-t.integer :article_id
+<div class='col-xs-12'>
 
-t.integer :category_id
+<%= form_for(@article, :html => {class: "form-horizontal", role: "form"}) do |f| %>
 
-Run rake db:migrate to create the table:
+<div class="form-group">
 
-rake db:migrate
+<div class="control-label col-sm-2">
 
-Create a model file named article_category.rb under the app/models folder and fill it in:
+<%= f.label :title %>
 
-class ArticleCategory < ActiveRecord::Base
+</div>
 
-# Note Rails 5 -> class ArticleCategory < ApplicationRecord
+<div class="col-sm-8">
 
-belongs_to :article
+<%= f.text_field :title, class: "form-control", placeholder: "Title of article", autofocus: true %>
 
-belongs_to :category
+</div>
+
+</div>
+
+<div class="form-group">
+
+<div class="control-label col-sm-2">
+
+<%= f.label :description %>
+
+</div>
+
+<div class="col-sm-8">
+
+<%= f.text_area :description, rows: 10, class: "form-control", placeholder: "Body of article" %>
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<div class="row">
+
+<div class="col-sm-offset-2 col-sm-8">
+
+<%= f.collection_check_boxes :category_ids, Category.all, :id, :name do |cb| %>
+
+<% cb.label(class: "checkbox-inline input_checkbox") {cb.check_box(class: "checkbox") + cb.text} %>
+
+<% end %>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="form-group">
+
+<div class="col-sm-offset-2 col-sm-10">
+
+<%= f.submit class: 'btn btn-primary btn-lg' %>
+
+</div>
+
+</div>
+
+<% end %>
+
+<div class="col-xs-4 col-xs-offset-4">
+
+[ <%= link_to "Cancel request and return to articles listing", articles_path %> ]
+
+</div>
+
+</div>
+
+</div>
+
+Update the article_params method under private in the articles_controller.rb file to allow category_ids:
+
+def article_params
+
+params.require(:article).permit(:title, :description, category_ids: [])
 
 end
-
-Update the article.rb and category.rb model files to include the following lines:
-
-article.rb ->
-
-has_many :article_categories
-
-has_many :categories, through: :article_categories
-
-category.rb ->
-
-has_many :article_categories
-
-has_many :articles, through: :article_categories
-
-Then hop on the rails console and test out the associations:
-
-ArticleCategory.all
-
-ArticleCategory
-
-article = Article.last
-
-category = Category.last
-
-article.categories
-
-article.categories << category
-
-category.articles
-
-category.articles << article
