@@ -1,90 +1,104 @@
-Add Association from UI - Text directions and code
-Update the _form.html.erb partial under the app/views/articles folder and add the part to associate categories:
+Update Views - Text directions and code
+Add in the following code under description and above article-actions in the show.html.erb file under app/views/articles folder:
 
-<%= render 'shared/errors', obj: @article %>
+<% if @article.categories.any? %>
 
-<div class='row'>
+<p>Categories: <%= render @article.categories %></p>
 
-<div class='col-xs-12'>
+<% end %>
 
-<%= form_for(@article, :html => {class: "form-horizontal", role: "form"}) do |f| %>
+Under app/views/categories folder add a _category.html.erb partial and fill it in with the following:
 
-<div class="form-group">
+<span class="badge"><%= link_to category.name, category_path(category) %>  </span>
 
-<div class="control-label col-sm-2">
+Update styling in your custom.css.scss file under app/assets directory:
 
-<%= f.label :title %>
+.badge {
+
+background-color: #CEF6F5;
+
+text-transform: uppercase;
+
+letter-spacing: -1px;
+
+font-weight: bold;
+
+}
+
+.input_checkbox input {
+
+width: auto !important;
+
+}
+
+Next update the _article.html.erb partial under the app/views/articles folder above the if logged in block for article-actions:
+
+<% if article.categories.any? %>
+
+<p>Categories: <%= render article.categories %></p>
+
+<% end %>
+
+Update the show.html.erb template under the app/views/categories folder:
+
+<h1 align="center"><%= "Category: " + @category.name %></h1>
+
+<div align="center">
+
+<%= will_paginate @category_articles %>
 
 </div>
 
-<div class="col-sm-8">
+<%= render 'articles/article', obj: @category_articles %>
 
-<%= f.text_field :title, class: "form-control", placeholder: "Title of article", autofocus: true %>
+<div align="center">
 
-</div>
-
-</div>
-
-<div class="form-group">
-
-<div class="control-label col-sm-2">
-
-<%= f.label :description %>
+<%= will_paginate @category_articles %>
 
 </div>
 
-<div class="col-sm-8">
+Update the categories_controller.rb file show action:
 
-<%= f.text_area :description, rows: 10, class: "form-control", placeholder: "Body of article" %>
+def show
 
-</div>
+@category = Category.find(params[:id])
 
-</div>
+@category_articles = @category.articles.paginate(page: params[:page], per_page: 5)
 
-<div class="form-group">
+end
+
+Update the index.html.erb page under app/views/categories folder to add number of articles in each category:
+
+<h1 align="center">Listing All Categories</h1>
+
+<div align="center">
+
+<%= will_paginate %>
+
+<% @categories.each do |category| %>
+
+<ul class="listing">
 
 <div class="row">
 
-<div class="col-sm-offset-2 col-sm-8">
+<div class="well col-md-4 col-md-offset-4">
 
-<%= f.collection_check_boxes :category_ids, Category.all, :id, :name do |cb| %>
+<li class="article-title">
 
-<% cb.label(class: "checkbox-inline input_checkbox") {cb.check_box(class: "checkbox") + cb.text} %>
+<%= link_to "#{category.name}", category_path(category) %>
+
+</li>
+
+<li><small><%= pluralize(category.articles.count, "article") %></small></li>
+
+</div>
+
+</div>
+
+</ul>
 
 <% end %>
 
-</div>
+<%= will_paginate %>
 
 </div>
-
-</div>
-
-<div class="form-group">
-
-<div class="col-sm-offset-2 col-sm-10">
-
-<%= f.submit class: 'btn btn-primary btn-lg' %>
-
-</div>
-
-</div>
-
-<% end %>
-
-<div class="col-xs-4 col-xs-offset-4">
-
-[ <%= link_to "Cancel request and return to articles listing", articles_path %> ]
-
-</div>
-
-</div>
-
-</div>
-
-Update the article_params method under private in the articles_controller.rb file to allow category_ids:
-
-def article_params
-
-params.require(:article).permit(:title, :description, category_ids: [])
-
-end

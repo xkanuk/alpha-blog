@@ -9,9 +9,11 @@
     <div class="row justify-content-md-center">
       <div class="col-8 mt-4">
         <div class="card text-center shadow mb-1 bg-white rounded">
-          <div class="card-header font-italic">
-            <%=  link_to category.name, category %>
+          <div class="card-header">
+            <%=  link_to category.name, category %> <br>
+            <small><em> <%= pluralize(category.articles.count, "article") %> </em></small>
           </div>
+
         </div>
       </div>
     </div>
