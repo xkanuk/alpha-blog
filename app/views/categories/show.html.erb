@@ -1,7 +1,12 @@
 <h1 class="text-center mt-4"><%= "Category: " + @category.name %></h1>
 
-<div class="flickr_pagination">
-  <%= will_paginate @category_articles, :container => false %>
+<div align="center">
+  <% if logged_in? && current_user.admin? %>
+    <%= link_to "Edit", edit_category_path(@category), class: "btn btn-outline-info" %>
+  <% end %>
+  <div class="flickr_pagination">
+    <%= will_paginate @category_articles, :container => false %>
+  </div>
 </div>
 
 <%= render 'category_articles'%>
