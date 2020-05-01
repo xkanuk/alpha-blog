@@ -1,4 +1,7 @@
 <div class="container">
+  <% if @category_articles.count == 0 %>
+  <p class="text-center mt-4">This category has no articles<p>
+  <% end %>
   <% @category_articles.each do |article| %>
     <div class="row justify-content-md-center">
       <div class="col-8 mt-4">
