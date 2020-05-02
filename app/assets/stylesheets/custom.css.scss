@@ -1,8 +1,8 @@
 @import 'bootstrap/dist/css/bootstrap';
 
-.navbar {
-  background-color: black !important;
-}
+// .navbar {
+//   background-color: grey !important;
+// }
 
 .nav-link {
   color: white !important;
@@ -11,6 +11,7 @@
 .navbar-brand {
     font-size: 3rem;
 }
+
 
 #logo {
   float: left;
@@ -26,7 +27,7 @@
 }
 
 .jumbotron {
-  background-image: asset-url('jumbo-copy.jpg');
+  background-image: asset-url('mahia.jpg');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
